@@ -1,4 +1,5 @@
-# node01 for 5-node cluster, ceph storage, ha interface. using OVS
+# node01 for 5-node cluster, ceph storage, ha interface. using OVS.
+# see hosts file for list of other nodes in cluster
 
 allow-vmbr0 bond0
 iface bond0 inet manual
