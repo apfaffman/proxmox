@@ -1,0 +1,57 @@
+# node01 for 5-node cluster, ceph storage, ha interface. using OVS
+
+allow-vmbr0 bond0
+iface bond0 inet manual
+        ovs_bonds eno1 eno2
+        ovs_type OVSBond
+        ovs_bridge vmbr0
+        ovs_options lacp=active bond_mode=balance-tcp
+
+auto lo
+iface lo inet loopback
+
+allow-vmbr1 eno3
+iface eno3 inet manual
+        ovs_type OVSPort
+        ovs_bridge vmbr1
+
+allow-vmbr2 eno4
+iface eno4 inet manual
+        ovs_type OVSPort
+        ovs_bridge vmbr2
+
+iface eno2 inet manual
+
+iface eno1 inet manual
+
+allow-vmbr0 vlan3400
+iface vlan3400 inet static
+        address 192.168.221.1/23
+        gateway 192.168.220.1
+        ovs_type OVSIntPort
+        ovs_bridge vmbr0
+        ovs_options tag=3400
+        up route add -host 10.17.102.150 gw 192.168.220.1
+        up route add -host 10.17.120.251 gw 192.168.220.1
+#       up route add -host 10.17.119.251 gw 192.168.220.1
+        up route add -net 10.17.119.251 gw 192.168.220.1
+#public
+
+allow-ovs vmbr0
+iface vmbr0 inet manual
+        ovs_type OVSBridge
+        ovs_ports bond0 vlan3400
+
+allow-ovs vmbr1
+iface vmbr1 inet static
+        address 10.210.1.1/24
+        ovs_type OVSBridge
+        ovs_ports eno3
+#ha
+
+allow-ovs vmbr2
+iface vmbr2 inet static
+        address 10.211.1.1/24
+        ovs_type OVSBridge
+        ovs_ports eno4
+#ceph
