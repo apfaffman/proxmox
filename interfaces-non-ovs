@@ -1,0 +1,37 @@
+auto lo
+iface lo inet loopback
+
+auto eno1
+iface eno1 inet manual
+
+auto eno4
+iface eno4 inet static
+  address 192.168.160.250
+  netmask 24
+
+auto eno2
+iface en2 inet manual
+
+auto eno3
+iface eno3 inet manual
+
+auto bond0
+iface bond0 inet manual
+  bond-slaves eno2 eno3
+  bond-miimon 100
+  bond-mode 802.3ad
+  bond-xmit-hash-policy layer 2+3
+
+auto vmbr1
+iface vmbr1 inet manual
+  bridge-ports bond0
+  bridge-stp off
+  bridge-fd 0
+  bridge-vlan-aware yes
+  bridge-vids 2-4094
+  
+auto vmbr1.3400
+iface vmbr1.3400 inet static
+  address 192.168.220.50
+  netmask 23
+  gateway 192.168.220.1
